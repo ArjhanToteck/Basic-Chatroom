@@ -1,0 +1,83 @@
+
+<head>
+	<style>
+		button {
+			height: 25;
+			width: 105;
+		}
+
+		input {
+			height: 25;
+		}
+	</style>
+	<title>Chatroom | ArjhanToteck</title>
+	<link rel="icon" href="/favicon.png">
+	<link href="/style.css" rel="stylesheet" type="text/css" media="all">
+</head>
+
+<body>
+	<h1 class="glitch" id="heading" data-text="Chatroom">Chatroom</h1>
+	<div id="chat"></div>
+	<div id="chatInput">
+		<input size="35" autocomplete="off" placeholder="Message" autofocus id="messageBox">
+		<button onclick="sendMessage()">Send</button>
+	</div>
+</body>
+
+<script>
+	const server = "basic-chatroom.arjhantoteck.repl.co";
+	let password;
+	let gameCode;
+	let connection;
+
+	setUpConnection();
+
+	// adds enter key event listener
+	document.addEventListener('keydown', function(event) {
+		if (event.key == "Enter") {
+			sendMessage();
+		}
+	});
+
+	function setUpConnection() {
+		// establishes connection with websocket server
+		connection = new WebSocket(`wss://${server}`);
+
+		// waits until connection opened
+		connection.addEventListener("open", function(event) {
+			console.log("opened");
+		});
+
+		// recieve websocket messages
+		connection.addEventListener("message", function(event) {
+			const messages = JSON.parse(event.data);
+			handleWebSocketMessage(messages);
+		});
+	}
+
+	function sendMessage() {
+		connection.send(JSON.stringify({
+			date: new Date().toUTCString(),
+			message: messageBox.value
+		}));
+		messageBox.value = "";
+	}
+
+	function handleWebSocketMessage(messages) {
+		// loops through every sent message
+		for (let i = 0; i < messages.length; i++) {
+			// parses date
+			let date = new Date(messages[i].date);
+			let dateString = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear().toString().substring(2)}, ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${date.getMinutes().toString().length == 2 ? date.getMinutes() : "0" + date.getMinutes()} ${date.getHours() > 12 ? "PM" : "AM"}`;
+
+			// shows each message
+			messageElement = document.createElement("div");
+			messageElement.innerHTML = `<span style="background-color: white; color: #262626">NAME (DATE)</span><br><span style="color: white;">MESSAGE</span><br><br>`;
+			messageElement.childNodes[0].innerText = `${messages[i].sender} (${dateString})`;
+			messageElement.childNodes[2].innerText = `${messages[i].message}`;
+
+			// shows message
+			chat.appendChild(messageElement);
+		}
+	}
+</script>
