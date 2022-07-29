@@ -40,8 +40,7 @@ wsServer.on("request", function(request) {
 		// sends chat history to connection
 		chat.get("chat").then((data) => {
 			connection.sendUTF(JSON.stringify(data));
-		});
-		
+		});		
 
 		// listens for connection to game
 		connection.on("message", function(data) {
