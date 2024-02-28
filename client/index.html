@@ -25,7 +25,7 @@
 </body>
 
 <script>
-	const server = "basic-chatroom.arjhantoteck.repl.co";
+	const server = "fa3b157f-1755-46f8-ae53-3f7655748664-00-7j0o8vn1p6mh.kirk.repl.co";
 	let password;
 	let gameCode;
 	let connection;
@@ -57,7 +57,6 @@
 
 	function sendMessage() {
 		connection.send(JSON.stringify({
-			date: new Date().toUTCString(),
 			message: messageBox.value
 		}));
 		messageBox.value = "";
@@ -68,13 +67,11 @@
 		for (let i = 0; i < messages.length; i++) {
 			// parses date
 			let date = new Date(messages[i].date);
-			let dateString = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear().toString().substring(2)}, ${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}:${date.getMinutes().toString().length == 2 ? date.getMinutes() : "0" + date.getMinutes()} ${date.getHours() > 12 ? "PM" : "AM"}`;
 
 			// shows each message
 			messageElement = document.createElement("div");
-			messageElement.innerHTML = `<span style="background-color: white; color: #262626">NAME (DATE)</span><br><span style="color: white;">MESSAGE</span><br><br>`;
-			messageElement.childNodes[0].innerText = `${messages[i].sender} (${dateString})`;
-			messageElement.childNodes[2].innerText = `${messages[i].message}`;
+			messageElement.innerHTML += `<span style="background-color: white; color: #262626">${messages[i].sender} (${date.toLocaleDateString()}, ${date.toLocaleTimeString()})</span><br>`;
+			messageElement.innerHTML += `<span style="color: white;">${messages[i].message}</span><br><br>`;
 
 			// shows message
 			chat.appendChild(messageElement);
