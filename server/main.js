@@ -2,6 +2,8 @@ const http = require("http");
 const WebSocketServer = require("websocket").server;
 const Database = require("@replit/database")
 
+const ChatMessage = require("ChatMessage.js")
+
 // opens database
 const chat = new Database();
 
@@ -32,34 +34,34 @@ wsServer.on("request", function(request) {
 	if (request.origin.indexOf("arjhantoteck.vercel.app") == -1) {
 		// rejects bad request
 		request.reject();
-		return;
 	} else {
+		// accept connection
 		let connection = request.accept(null, request.origin);
 		connections.push(connection);
 		
 		// sends chat history to connection
 		chat.get("chat").then((data) => {
 			connection.sendUTF(JSON.stringify(data));
-		});		
+		});
 
 		// listens for connection to game
 		connection.on("message", function(data) {
-			const message = JSON.parse(data.utf8Data);
+			const socketMessage = JSON.parse(data.utf8Data);
 
-			if(!message.message || !message.date){
+			// ignore bad message
+			if(!socketMessage.message || !socketMessage.date){
 				return;
 			}
+
+			// create message object
+			message = new ChatMessage("anonymous", socketMessage.message, socketMessage.date)
 
 			// gets current chat from database
 			let currentChat = chat.get("chat").then((data) => {
 				let currentChat = data;
-				
+
 				// modifies chat to add message
-				currentChat.push({
-					message: message.message,
-					date: message.date,
-					sender: "Anonymous"
-				});	
+				currentChat.push(message);	
 
 				// sets chat to modified version
 				chat.set("chat", currentChat);
@@ -67,11 +69,7 @@ wsServer.on("request", function(request) {
 
 			// pushes message out to all connections
 			for (let i = 0; i < connections.length; i++) {
-				connections[i].sendUTF(JSON.stringify([{
-					message: message.message,
-					date: message.date,
-					sender: "Anonymous"
-				}]));
+				connections[i].sendUTF(JSON.stringify(message));
 			}
 		});
 
