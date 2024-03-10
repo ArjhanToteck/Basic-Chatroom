@@ -13,7 +13,7 @@ const database = new Database();
 let connections = [];
 
 // opens http server
-let server = http.createServer(function(req, res) {
+let server = http.createServer(function (req, res) {
 	const headers = {
 		"Access-Control-Allow-Origin": "*",
 		"Content-Type": "text/plain",
@@ -31,7 +31,7 @@ wsServer = new WebSocketServer({
 	autoAcceptConnections: false,
 });
 
-wsServer.on("request", function(request) {
+wsServer.on("request", function (request) {
 	// accept connection
 	let connection = request.accept(null, request.origin);
 	connections.push(connection);
@@ -48,7 +48,7 @@ wsServer.on("request", function(request) {
 	});
 
 	// listens for connection to game
-	connection.on("message", function(data) {
+	connection.on("message", function (data) {
 		const socketMessage = JSON.parse(data.utf8Data);
 
 		// ignore bad message
@@ -87,7 +87,7 @@ wsServer.on("request", function(request) {
 	});
 
 	// prepares for connection to close
-	connection.on("close", function() {
+	connection.on("close", function () {
 		// removes connection from chat room
 		connections = connections.splice(connections.indexOf(connection), 1);
 	});
