@@ -1,4 +1,4 @@
-class ChatMessage {
+class Message {
     constructor(sender, message, date) {
         this.sender = sender;
         this.message = message;
@@ -6,4 +6,4 @@ class ChatMessage {
     }
 }
 
-module.exports = ChatMessage
+module.exports = Message

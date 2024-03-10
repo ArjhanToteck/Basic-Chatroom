@@ -1,65 +1,25 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from "react";
+import { useEffect } from "react";
+import io from "socket.io-client";
 
-export default function BasicChatroom() {
+export default function page() {
 	useEffect(() => {
-		const server = "fa3b157f-1755-46f8-ae53-3f7655748664-00-7j0o8vn1p6mh.kirk.repl.co";
-		let password;
-		let gameCode;
-		let connection;
+		// make sure to enable socketioServer and namespace
+		fetch("/api/basicChatroom")
+			.finally(() => {
+				// connect to namespace
+				const socket = io("/basicChatroom");
 
-		setUpConnection();
-
-		function setUpConnection() {
-			// establishes connection with websocket server
-			connection = new WebSocket(`wss://${server}`);
-
-			// waits until connection opened
-			connection.addEventListener("open", function (event) {
-				console.log("opened");
-			});
-
-			// recieve websocket messages
-			connection.addEventListener("message", function (event) {
-				const messages = JSON.parse(event.data);
-				handleWebSocketMessage(messages);
-			});
-		}
-
-		function sendMessage() {
-			connection.send(JSON.stringify({
-				message: messageBox.value
-			}));
-			messageBox.value = "";
-		}
-
-		// adds enter key event listener for sendMessage
-		document.addEventListener('keydown', function (event) {
-			if (event.key == "Enter") {
-				sendMessage();
-			}
-		});
-
-		function handleWebSocketMessage(messages) {
-			// loops through every sent message
-			for (let i = 0; i < messages.length; i++) {
-				// parses date
-				let date = new Date(messages[i].date);
-
-				// create Message component
-				let messageComponent = React.createElement(Message, {
-					sender: messages[i].sender,
-					date: date,
-					message: messages[i].message,
+				socket.on("connect", () => {
+					console.log("connected");
+					socket.emit("test", "something");
 				});
 
-				// append messageComponent to chat
-				ReactDOM.render(messageComponent, document.getElementById("chat"));
-			}
-		}
-
-
+				socket.on("test", data => {
+					console.log("test", data);
+				});
+			});
 	}, []);
 
 	return (
