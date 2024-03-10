@@ -1,32 +1,43 @@
 const Message = require("./Message");
-import startServer, { io } from "/pages/api/socketio.js";
+import startSocketio, { io } from "/pages/api/socketio.js";
+import startPocketbase, { pocketbase } from "/pages/api/pocketbase.js";
 
 let namespace;
 
-const startNamespace = (req, res) => {
-	// start socketio server if needed
-	startServer(req, res);
+export default function startNamespace(req, res) {
+	// wake up socketio server
+	startSocketio(req, res);
 
 	// start namespace
 	if (!namespace) {
 		console.log("starting basicChatroom namespace");
 
 		namespace = io.of("/basicChatroom")
-			.on("connection", socket => {
-				// test message
-				socket.emit("message", new Message("Server", "Hello world", new Date()));
+			.on("connection", async (socket) => {
+				// wake up pocketbase
+				startPocketbase(req, res);
 
-				socket.on("message", (content) => {
+				// listen for messages
+				socket.on("message", async (content) => {
 					// create message object
-					let message = new Message("Anonymous", content, new Date());
+					const message = new Message("Anonymous", content, new Date());
 
 					// broadcast message to all of namespace
-					namespace.emit("message", message);
+					namespace.emit("messages", [message]);
+
+					// add message to database
+					await pocketbase.collection("basicChatroom").create(message);
 				});
+
+				// get chat history
+				const messages = await pocketbase.collection("basicChatroom").getFullList({
+					sort: "-date",
+				});
+
+				// send chat history to user
+				socket.emit("messages", messages.reverse());
 			});
 	}
 
 	res.end();
 };
-
-export default startNamespace;

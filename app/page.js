@@ -26,8 +26,9 @@ export default function page() {
 				});
 
 				// listen for messages
-				socket.current.on("message", (data) => {
-					setMessages((previousMessages) => [...previousMessages, data]);
+				socket.current.on("messages", (data) => {
+					console.log(data);
+					setMessages((previousMessages) => [...previousMessages, ...data]);
 				});
 			});
 	}, []);
