@@ -1,4 +1,4 @@
-const http = require("http");
+/*const http = require("http");
 const WebSocketServer = require("websocket").server;
 const Database = require("@replit/database");
 
@@ -91,4 +91,4 @@ wsServer.on("request", function (request) {
 		// removes connection from chat room
 		connections = connections.splice(connections.indexOf(connection), 1);
 	});
-});
+});*/
