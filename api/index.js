@@ -13,7 +13,16 @@ const startNamespace = (req, res) => {
 
 		namespace = io.of("/basicChatroom")
 			.on("connection", socket => {
+				// test message
 				socket.emit("message", new Message("Server", "Hello world", new Date()));
+
+				socket.on("message", (content) => {
+					// create message object
+					let message = new Message("Anonymous", content, new Date());
+
+					// broadcast message to all of namespace
+					namespace.emit("message", message);
+				});
 			});
 	}
 

@@ -1,19 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 
 export default function page() {
-	let socket;
 	const [messages, setMessages] = useState([]);
+	const socket = useRef(null);
 
-	function handleMessage(message) {
-		messages.push(re)
-		const messageComponent = <Message message={message} />;
-		const chat = document.getElementById("chat");
-
-		ReactDOM.render(messageComponent, chat);
+	function sendMessage() {
+		const messageBox = document.getElementById("messageBox");
+		socket.current.emit("message", messageBox.value);
+		messageBox.value = "";
 	}
 
 	useEffect(() => {
@@ -21,15 +18,15 @@ export default function page() {
 		fetch("/api/basicChatroom")
 			.finally(() => {
 				// connect to namespace
-				socket = io("/basicChatroom");
+				socket.current = io("/basicChatroom");
 
 				// listen for connection
-				socket.on("connect", () => {
+				socket.current.on("connect", () => {
 					console.log("connected");
 				});
 
 				// listen for messages
-				socket.on("message", (data) => {
+				socket.current.on("message", (data) => {
 					setMessages((previousMessages) => [...previousMessages, data]);
 				});
 			});
@@ -40,13 +37,15 @@ export default function page() {
 			<h1 className="glitch" id="heading" data-text="Chatroom">Chatroom</h1>
 			<div id="chat">
 				{messages.map((message, index) => (
-					<Message key={index} message={message} />
+					<div>
+						<Message key={index} message={message} />
+						<br></br>
+					</div>
 				))}
 			</div>
-			<br></br>
 			<div id="chatInput">
 				<input size="35" autocomplete="off" placeholder="Message" autofocus id="messageBox"></input>
-				<button onclick={() => sendMessage()}>Send</button>
+				<button onClick={sendMessage}>Send</button>
 			</div>
 		</main>
 	);
