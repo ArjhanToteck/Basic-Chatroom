@@ -1,7 +1,7 @@
 class Message {
-    constructor(sender, message, date) {
+    constructor(sender, content, date) {
         this.sender = sender;
-        this.message = message;
+        this.content = content;
         this.date = date;
     }
 }

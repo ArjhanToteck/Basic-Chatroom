@@ -1,3 +1,4 @@
+const Message = require("./Message");
 import startServer, { io } from "/pages/api/socketio.js";
 
 let namespace;
@@ -12,17 +13,11 @@ const startNamespace = (req, res) => {
 
 		namespace = io.of("/basicChatroom")
 			.on("connection", socket => {
-				socket.emit("test", "asdasd");
-				socket.on("test", message => {
-					console.log("test", message);
-					socket.emit("test", message);
-				});
+				socket.emit("message", new Message("Server", "Hello world", new Date()));
 			});
 	}
 
 	res.end();
 };
-
-
 
 export default startNamespace;
