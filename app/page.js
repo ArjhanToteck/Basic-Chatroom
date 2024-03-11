@@ -15,19 +15,13 @@ export default function page() {
 
 	useEffect(() => {
 		// make sure to enable socketioServer and namespace
-		fetch("/api/basicChatroom")
+		fetch(process.env.NEXT_PUBLIC_SOCKETIO_SERVER + "/api/basicChatroom")
 			.finally(() => {
 				// connect to namespace
-				socket.current = io("/basicChatroom");
-
-				// listen for connection
-				socket.current.on("connect", () => {
-					console.log("connected");
-				});
+				socket.current = io(process.env.NEXT_PUBLIC_SOCKETIO_SERVER + "/basicChatroom");
 
 				// listen for messages
 				socket.current.on("messages", (data) => {
-					console.log(data);
 					setMessages((previousMessages) => [...previousMessages, ...data]);
 				});
 			});
