@@ -1,0 +1,2 @@
+# Basic Chatroom
+Just a basic chatroom I wrote years ago. I remade it recently, now using pocketbase as a database instead of Replit, socket.io instead of the basic websocket library, and Next.js instead of vanilla Node.js. Pretty cool.
