@@ -17,6 +17,14 @@ export default function startNamespace(req, res) {
 				// wake up pocketbase
 				startPocketbase(req, res);
 
+				// get chat history
+				const messages = await pocketbase.collection("basicChatroom").getFullList({
+					sort: "-date",
+				});
+
+				// send chat history to user
+				socket.emit("messages", messages.reverse());
+
 				// listen for messages
 				socket.on("message", async (content) => {
 					// create message object
@@ -28,14 +36,6 @@ export default function startNamespace(req, res) {
 					// add message to database
 					await pocketbase.collection("basicChatroom").create(message);
 				});
-
-				// get chat history
-				const messages = await pocketbase.collection("basicChatroom").getFullList({
-					sort: "-date",
-				});
-
-				// send chat history to user
-				socket.emit("messages", messages.reverse());
 			});
 	}
 

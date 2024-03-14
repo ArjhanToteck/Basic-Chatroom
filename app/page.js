@@ -5,6 +5,7 @@ import io from "socket.io-client";
 
 export default function page() {
 	const [messages, setMessages] = useState([]);
+	const [scrolledToBottom, setScrolledToBottom] = useState(true);
 	const socket = useRef(null);
 
 	function sendMessage() {
@@ -13,7 +14,18 @@ export default function page() {
 		messageBox.value = "";
 	}
 
+	function handleKeyDown(event) {
+		if (event.key === "Enter") {
+			sendMessage();
+		}
+	}
+
 	useEffect(() => {
+		// checks if scrolled to bottom
+		window.onscroll = () => {
+			setScrolledToBottom((window.innerHeight + window.scrollY) >= document.body.offsetHeight);
+		};
+
 		// make sure to enable socketioServer and namespace
 		fetch(process.env.NEXT_PUBLIC_SOCKETIO_SERVER + "/api/basicChatroom")
 			.finally(() => {
@@ -22,27 +34,59 @@ export default function page() {
 
 				// listen for messages
 				socket.current.on("messages", (data) => {
+					// set messages
 					setMessages((previousMessages) => [...previousMessages, ...data]);
 				});
 			});
 	}, []);
 
+	useEffect(() => {
+		// autoscroll
+		if (scrolledToBottom) {
+			console.log(scrolledToBottom);
+			window.scrollTo(0, document.body.scrollHeight);
+		}
+	}, [messages]);
+
 	return (
 		<main>
-			<h1 className="glitch" id="heading" data-text="Chatroom">Chatroom</h1>
-			<div id="chat">
-				{messages.map((message, index) => (
-					<div>
-						<Message key={index} message={message} />
-						<br></br>
+			<div style={{ position: "fixed", width: "100%", zIndex: 1 }}>
+				<header className="red">
+					<h1>Basic Chatroom</h1>
+				</header>
+				<div className="divider topDivider"></div>
+			</div>
+			<section>
+				<content>
+					<div id="chat" style={{ paddingBottom: "50px", paddingTop: "250px" }}>
+						{messages.map((message, index) => (
+							<div key={index}>
+								<Message message={message} />
+								<br></br>
+							</div>
+						))}
 					</div>
-				))}
-			</div>
-			<div id="chatInput">
-				<input size="35" autocomplete="off" placeholder="Message" autofocus id="messageBox"></input>
-				<button onClick={sendMessage}>Send</button>
-			</div>
-		</main>
+				</content>
+				<div
+					id="chatInput"
+					style={{
+						width: "85%",
+						display: "flex",
+						bottom: "10px",
+						position: "fixed",
+					}}>
+					<input
+						autoComplete="off"
+						placeholder="Message"
+						autoFocus
+						onKeyDown={handleKeyDown}
+						id="messageBox"
+						style={{ flex: 1 }}>
+					</input>
+					<button onClick={sendMessage} style={{ marginLeft: "5px" }}>Send</button>
+				</div>
+			</section>
+		</main >
 	);
 }
 
@@ -52,10 +96,10 @@ function Message({ message }) {
 	date = new Date(date);
 
 	return (
-		<div>
-			<span className="invertedColors">
+		<div style={{ textAlign: "center" }}>
+			<strong style={{ color: "red" }}>
 				{sender} ({date.toLocaleDateString()}, {date.toLocaleTimeString()})
-			</span>
+			</strong>
 			<br></br>
 			<span>{content}</span>
 		</div>
