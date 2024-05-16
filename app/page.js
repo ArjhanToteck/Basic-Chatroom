@@ -7,6 +7,7 @@ export default function page() {
 	const [messages, setMessages] = useState([]);
 	const [scrolledToBottom, setScrolledToBottom] = useState(true);
 	const socket = useRef(null);
+	const chat = useRef(null);
 
 	function sendMessage() {
 		const messageBox = document.getElementById("messageBox");
@@ -22,8 +23,11 @@ export default function page() {
 
 	useEffect(() => {
 		// checks if scrolled to bottom
+		const chatElement = chat.current;
+
 		window.onscroll = () => {
-			setScrolledToBottom((window.innerHeight + window.scrollY) >= document.body.offsetHeight);
+			const isScrolledToBottom = chatElement.scrollHeight - chatElement.clientHeight <= chatElement.scrollTop + 1;
+			setScrolledToBottom(isScrolledToBottom);
 		};
 
 		// make sure to enable socketioServer and namespace
@@ -43,22 +47,21 @@ export default function page() {
 	useEffect(() => {
 		// autoscroll
 		if (scrolledToBottom) {
-			console.log(scrolledToBottom);
-			window.scrollTo(0, document.body.scrollHeight);
+			chat.current.scrollTo(0, document.body.scrollHeight);
 		}
 	}, [messages]);
 
 	return (
 		<main>
-			<div style={{ position: "fixed", width: "100%", zIndex: 1 }}>
+			<div style={{ width: "100%" }}>
 				<header className="red">
-					<h1>Basic Chatroom</h1>
+					<h2>Basic Chatroom</h2>
 				</header>
 				<div className="divider topDivider"></div>
 			</div>
 			<section>
 				<content>
-					<div id="chat" style={{ paddingBottom: "50px", paddingTop: "250px" }}>
+					<div id="chat" style={{ maxHeight: "500px", overflow: "auto" }} ref={chat}>
 						{messages.map((message, index) => (
 							<div key={index}>
 								<Message message={message} />
@@ -67,13 +70,12 @@ export default function page() {
 						))}
 					</div>
 				</content>
+				<br></br>
 				<div
 					id="chatInput"
 					style={{
 						width: "85%",
-						display: "flex",
-						bottom: "10px",
-						position: "fixed",
+						display: "flex"
 					}}>
 					<input
 						autoComplete="off"
@@ -86,7 +88,7 @@ export default function page() {
 					<button onClick={sendMessage} style={{ marginLeft: "5px" }}>Send</button>
 				</div>
 			</section>
-		</main >
+		</main>
 	);
 }
 
