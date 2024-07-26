@@ -53,12 +53,6 @@ export default function page() {
 
 	return (
 		<main>
-			<div style={{ width: "100%" }}>
-				<header className="red">
-					<h2>Basic Chatroom</h2>
-				</header>
-				<div className="divider topDivider"></div>
-			</div>
 			<section>
 				<content>
 					<div id="chat" style={{ maxHeight: "500px", overflow: "auto" }} ref={chat}>
