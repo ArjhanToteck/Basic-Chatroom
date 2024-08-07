@@ -31,7 +31,7 @@ export default function page() {
 		};
 
 		// make sure to enable socketioServer and namespace
-		fetch(process.env.NEXT_PUBLIC_SOCKETIO_SERVER + "/api/basicChatroom")
+		fetch(process.env.NEXT_PUBLIC_SOCKETIO_SERVER + "/api/projects/basicChatroom")
 			.finally(() => {
 				// connect to namespace
 				socket.current = io(process.env.NEXT_PUBLIC_SOCKETIO_SERVER + "/basicChatroom");
