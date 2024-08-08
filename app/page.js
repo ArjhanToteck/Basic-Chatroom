@@ -47,29 +47,29 @@ export default function page() {
 	useEffect(() => {
 		// autoscroll
 		if (scrolledToBottom) {
-			chat.current.scrollTo(0, document.body.scrollHeight);
+			chat.current.scrollTo(0, chat.current.scrollHeight);
 		}
 	}, [messages]);
 
 	return (
 		<main>
-			<section>
-				<content>
-					<div id="chat" style={{ maxHeight: "500px", overflow: "auto" }} ref={chat}>
-						{messages.map((message, index) => (
-							<div key={index}>
-								<Message message={message} />
-								<br></br>
-							</div>
-						))}
-					</div>
-				</content>
+			<section style={{ height: "100%" }}>
+				<div id="chat" style={{ height: "100%", width: "100%", overflowY: "auto" }} ref={chat}>
+					{messages.map((message, index) => (
+						<div key={index}>
+							<Message message={message} />
+							<br></br>
+						</div>
+					))}
+				</div>
 				<br></br>
 				<div
 					id="chatInput"
 					style={{
 						width: "85%",
-						display: "flex"
+						display: "flex",
+						position: "absolute",
+						bottom: "1%"
 					}}>
 					<input
 						autoComplete="off"
