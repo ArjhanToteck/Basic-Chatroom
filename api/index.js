@@ -1,4 +1,4 @@
-const Message = require("./Message");
+import Message from "./Message";
 import startSocketio, { io } from "/pages/api/socketio.js";
 import startPocketbase, { pocketbase } from "/pages/api/pocketbase.js";
 
