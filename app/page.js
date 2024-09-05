@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 
-export default function page() {
+export default function Page() {
 	const [messages, setMessages] = useState([]);
 	const [scrolledToBottom, setScrolledToBottom] = useState(true);
 	const socket = useRef(null);
@@ -49,7 +49,7 @@ export default function page() {
 		if (scrolledToBottom) {
 			chat.current.scrollTo(0, chat.current.scrollHeight);
 		}
-	}, [messages]);
+	}, [scrolledToBottom]);
 
 	return (
 		<main>
