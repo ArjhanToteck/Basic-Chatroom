@@ -1,6 +1,6 @@
 const Message = require("./Message");
-import startSocketio, { io } from "/pages/api/socketio.js";
-import startPocketbase, { pocketbase } from "/pages/api/pocketbase.js";
+import startSocketio, { io } from "/src/pages/api/socketio.js";
+import startPocketbase, { pocketbase } from "/src/pages/api/pocketbase.js";
 
 let namespace;
 
