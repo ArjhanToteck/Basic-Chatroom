@@ -54,7 +54,12 @@ export default function Page() {
 	return (
 		<main>
 			<section style={{ height: "100%" }}>
-				<div id="chat" style={{ height: "100%", width: "100%", overflowY: "auto" }} ref={chat}>
+				<div id="chat" ref={chat} style={{
+					wordBreak: "break-word",
+					width: "100%",
+					height: "500px",
+					overflowY: "scroll"
+				}}>
 					{messages.map((message, index) => (
 						<div key={index}>
 							<Message message={message} />
@@ -66,7 +71,7 @@ export default function Page() {
 				<div
 					id="chatInput"
 					style={{
-						width: "85%",
+						width: "80%",
 						display: "flex",
 						position: "absolute",
 						bottom: "1%"
