@@ -7,6 +7,7 @@ export default function Page() {
 	const [messages, setMessages] = useState([]);
 	const [scrolledToBottom, setScrolledToBottom] = useState(true);
 	const socket = useRef(null);
+	const chat = useRef(null);
 
 	function sendMessage() {
 		const messageBox = document.getElementById("messageBox");
@@ -22,12 +23,15 @@ export default function Page() {
 
 	useEffect(() => {
 		// checks if scrolled to bottom
+		const chatElement = chat.current;
+
 		window.onscroll = () => {
-			setScrolledToBottom((window.innerHeight + window.scrollY) >= document.body.offsetHeight);
+			const isScrolledToBottom = chatElement.scrollHeight - chatElement.clientHeight <= chatElement.scrollTop + 1;
+			setScrolledToBottom(isScrolledToBottom);
 		};
 
 		// make sure to enable socketioServer and namespace
-		fetch(process.env.NEXT_PUBLIC_SOCKETIO_SERVER + "/api/basicChatroom")
+		fetch(process.env.NEXT_PUBLIC_SOCKETIO_SERVER + "/api/projects/basicChatroom")
 			.finally(() => {
 				// connect to namespace
 				socket.current = io(process.env.NEXT_PUBLIC_SOCKETIO_SERVER + "/basicChatroom");
@@ -43,37 +47,36 @@ export default function Page() {
 	useEffect(() => {
 		// autoscroll
 		if (scrolledToBottom) {
-			console.log(scrolledToBottom);
-			window.scrollTo(0, document.body.scrollHeight);
+			chat.current.scrollTo(0, chat.current.scrollHeight);
 		}
-	}, [messages]);
+	}, [scrolledToBottom]);
 
 	return (
 		<main>
-			<div style={{ position: "fixed", width: "100%", zIndex: 1 }}>
-				<header className="red">
-					<h1>Basic Chatroom</h1>
-				</header>
-				<div className="divider topDivider"></div>
-			</div>
-			<section>
-				<content>
-					<div id="chat" style={{ paddingBottom: "50px", paddingTop: "250px" }}>
-						{messages.map((message, index) => (
-							<div key={index}>
-								<Message message={message} />
-								<br></br>
-							</div>
-						))}
-					</div>
-				</content>
+			<section style={{ height: "100%" }}>
+				<div id="chat" ref={chat} style={{
+					wordBreak: "break-word",
+					position: "fixed",
+					width: "100%",
+					top: "100px",
+					bottom: "150px",
+					overflowY: "scroll"
+				}}>
+					{messages.map((message, index) => (
+						<div key={index}>
+							<Message message={message} />
+							<br></br>
+						</div>
+					))}
+				</div>
+				<br></br>
 				<div
 					id="chatInput"
 					style={{
-						width: "85%",
+						width: "80%",
 						display: "flex",
-						bottom: "10px",
-						position: "fixed",
+						position: "absolute",
+						bottom: "1%"
 					}}>
 					<input
 						autoComplete="off"
@@ -86,7 +89,7 @@ export default function Page() {
 					<button onClick={sendMessage} style={{ marginLeft: "5px" }}>Send</button>
 				</div>
 			</section>
-		</main >
+		</main>
 	);
 }
 
