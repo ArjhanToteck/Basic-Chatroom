@@ -56,8 +56,10 @@ export default function Page() {
 			<section style={{ height: "100%" }}>
 				<div id="chat" ref={chat} style={{
 					wordBreak: "break-word",
+					position: "fixed",
 					width: "100%",
-					height: "500px",
+					top: "100px",
+					bottom: "150px",
 					overflowY: "scroll"
 				}}>
 					{messages.map((message, index) => (
