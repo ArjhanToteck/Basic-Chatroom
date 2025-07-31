@@ -22,12 +22,12 @@ export default function Page() {
 	}
 
 	useEffect(() => {
-		// checks if scrolled to bottom
 		const chatElement = chat.current;
 
-		window.onscroll = () => {
-			const isScrolledToBottom = chatElement.scrollHeight - chatElement.clientHeight <= chatElement.scrollTop + 1;
-			setScrolledToBottom(isScrolledToBottom);
+		// checks if scrolled to bottom on scroll
+		chatElement.onscroll = () => {
+			const currentScroll = chatElement.scrollHeight - chatElement.clientHeight <= chatElement.scrollTop + 1;
+			setScrolledToBottom(currentScroll);
 		};
 
 		// make sure to enable socketioServer and namespace
@@ -36,20 +36,25 @@ export default function Page() {
 				// connect to namespace
 				socket.current = io(process.env.NEXT_PUBLIC_SOCKETIO_SERVER + "/basicChatroom");
 
-				// listen for messages
-				socket.current.on("messages", (data) => {
-					// set messages
-					setMessages((previousMessages) => [...previousMessages, ...data]);
-				});
+				// make sure listen event isn't already subscribed to
+				if (!socket.listeningForMessage) {
+					// listen for messages
+					socket.current.on("messages", (data) => {
+						// set messages
+						setMessages((previousMessages) => [...previousMessages, ...data]);
+					});
+				}
+
+				socket.listeningForMessage = true;
 			});
 	}, []);
 
 	useEffect(() => {
 		// autoscroll
 		if (scrolledToBottom) {
-			chat.current.scrollTo(0, chat.current.scrollHeight);
+			chat.current.scrollTop = chat.current.scrollHeight;
 		}
-	}, [scrolledToBottom]);
+	}, [messages]);
 
 	return (
 		<main>
