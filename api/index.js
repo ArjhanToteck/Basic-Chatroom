@@ -6,7 +6,7 @@ let namespace;
 
 export default function startNamespace(req, res) {
 	// wake up socketio server
-	startSocketio(req, res);
+	startSocketio(req, res, false);
 
 	// start namespace
 	if (!namespace) {
@@ -16,7 +16,7 @@ export default function startNamespace(req, res) {
 
 		namespace.on("connection", async (socket) => {
 			// wake up pocketbase
-			startPocketbase(req, res);
+			startPocketbase();
 
 			// get chat history
 			const messages = await pocketbase.collection("basicChatroom").getFullList({
