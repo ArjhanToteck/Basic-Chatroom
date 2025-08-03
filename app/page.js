@@ -54,7 +54,7 @@ export default function Page() {
 		if (scrolledToBottom) {
 			chat.current.scrollTop = chat.current.scrollHeight;
 		}
-	}, [messages]);
+	}, [scrolledToBottom, messages]);
 
 	return (
 		<main>
