@@ -4,7 +4,8 @@ import startPocketbase, { pocketbase } from "@/src/pages/api/pocketbase.js";
 
 let namespace;
 
-export default function startNamespace(req, res) {
+// start namespace
+export default function handler(req, res) {
 	// wake up socketio server
 	startSocketio(null, res, false);
 
