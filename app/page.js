@@ -5,9 +5,9 @@ import io from "socket.io-client";
 
 export default function Page() {
 	const [messages, setMessages] = useState([]);
-	const [scrolledToBottom, setScrolledToBottom] = useState(true);
+	const scrolledToBottom = useRef(true);
 	const socket = useRef(null);
-	const chat = useRef(null);
+	const chatElement = useRef(null);
 
 	function sendMessage() {
 		const messageBox = document.getElementById("messageBox");
@@ -22,12 +22,12 @@ export default function Page() {
 	}
 
 	useEffect(() => {
-		const chatElement = chat.current;
+		const currentChat = chatElement.current;
 
 		// checks if scrolled to bottom on scroll
-		chatElement.onscroll = () => {
-			const currentScroll = chatElement.scrollHeight - chatElement.clientHeight <= chatElement.scrollTop + 1;
-			setScrolledToBottom(currentScroll);
+		currentChat.onscroll = () => {
+			const currentScroll = currentChat.scrollHeight - currentChat.clientHeight <= currentChat.scrollTop + 1;
+			scrolledToBottom.current = currentScroll;
 		};
 
 		// make sure to enable socketioServer and namespace
@@ -51,15 +51,15 @@ export default function Page() {
 
 	useEffect(() => {
 		// autoscroll
-		if (scrolledToBottom) {
-			chat.current.scrollTop = chat.current.scrollHeight;
+		if (scrolledToBottom.current) {
+			chatElement.current.scrollTop = chatElement.current.scrollHeight;
 		}
-	}, [scrolledToBottom, messages]);
+	}, [scrolledToBottom.current, messages]);
 
 	return (
 		<main>
 			<section style={{ height: "100%" }}>
-				<div id="chat" ref={chat} style={{
+				<div id="chat" ref={chatElement} style={{
 					wordBreak: "break-word",
 					position: "fixed",
 					width: "100%",
