@@ -5,6 +5,7 @@ import io from "socket.io-client";
 
 export default function Page() {
 	const [messages, setMessages] = useState([]);
+	const [loading, setLoading] = useState(true);
 	const scrolledToBottom = useRef(true);
 	const socket = useRef(null);
 	const chatElement = useRef(null);
@@ -40,6 +41,8 @@ export default function Page() {
 				if (!socket.listeningForMessage) {
 					// listen for messages
 					socket.current.on("messages", (data) => {
+						setLoading(false);
+
 						// set messages
 						setMessages((previousMessages) => [...previousMessages, ...data]);
 					});
@@ -67,6 +70,8 @@ export default function Page() {
 					bottom: "150px",
 					overflowY: "scroll"
 				}}>
+					<p style={{ display: loading ? "block" : "none" }}>Loading...</p>
+
 					{messages.map((message, index) => (
 						<div key={index}>
 							<Message message={message} />
