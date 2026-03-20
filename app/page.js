@@ -75,11 +75,13 @@ export default function Page() {
 					{messages.map((message, index) => (
 						<div key={index}>
 							<Message message={message} />
-							<br></br>
+							<br />
 						</div>
 					))}
+					1
+					<br />
 				</div>
-				<br></br>
+
 				<div
 					id="chatInput"
 					style={{

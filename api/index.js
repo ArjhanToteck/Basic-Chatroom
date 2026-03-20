@@ -1,4 +1,4 @@
-import Message from "./Message";
+import Message from "@/src/lib/projects/basicChatroom/Message";
 import startSocketio, { io } from "@/src/pages/api/socketio.js";
 import startPocketbase, { pocketbase } from "@/src/pages/api/pocketbase.js";
 
