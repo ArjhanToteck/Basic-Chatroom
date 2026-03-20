@@ -68,17 +68,19 @@ export default function Page() {
 					width: "100%",
 					top: "100px",
 					bottom: "150px",
-					overflowY: "scroll"
+					overflowY: "scroll",
 				}}>
-					<p style={{ display: loading ? "block" : "none" }}>Loading...</p>
+					<div style={{ width: "80%", margin: "0 auto" }}>
+						<p style={{ display: loading ? "block" : "none" }}>Loading...</p>
 
-					{messages.map((message, index) => (
-						<div key={index}>
-							<Message message={message} />
-							<br />
-						</div>
-					))}
-					<br />
+						{messages.map((message, index) => (
+							<div key={index}>
+								<Message message={message} />
+								<br />
+							</div>
+						))}
+						<br />
+					</div>
 				</div>
 
 				<div
