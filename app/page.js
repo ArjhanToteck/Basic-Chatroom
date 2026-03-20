@@ -78,7 +78,6 @@ export default function Page() {
 							<br />
 						</div>
 					))}
-					1
 					<br />
 				</div>
 
